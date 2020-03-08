@@ -85,6 +85,10 @@ class RestrictedBoltzmannMachine():
             # you may need to use the inference functions 'get_h_given_v' and 'get_v_given_h'.
             # note that inference methods returns both probabilities and activations (samples from probablities) and you may have to decide when to use what.
 
+            # self.get_h_given_v(self.batch_size)
+            # self.get_v_given_h(self.batch_size)
+
+
             # [TODO TASK 4.1] update the parameters using function 'update_params'
             
             # visualize once in a while when visible layer is input images
@@ -119,7 +123,7 @@ class RestrictedBoltzmannMachine():
         # [TODO TASK 4.1] get the gradients from the arguments (replace the 0s below) and update the weight and bias parameters
         
         self.delta_bias_v += 0
-        self.delta_weight_vh += 0
+        self.delta_weight_vh += self.momentum * self.delta_weight_vh * ()
         self.delta_bias_h += 0
         
         self.bias_v += self.delta_bias_v
@@ -146,8 +150,11 @@ class RestrictedBoltzmannMachine():
         n_samples = visible_minibatch.shape[0]
 
         # [TODO TASK 4.1] compute probabilities and activations (samples from probabilities) of hidden layer (replace the zeros below) 
-        
-        return np.zeros((n_samples,self.ndim_hidden)), np.zeros((n_samples,self.ndim_hidden))
+
+        prob_h_given_v = sigmoid(self.bias_h + np.dot(visible_minibatch, self.weight_vh))
+        act_h = sample_binary(prob_h_given_v)
+
+        return prob_h_given_v, act_h
 
 
     def get_v_given_h(self,hidden_minibatch):
@@ -185,9 +192,10 @@ class RestrictedBoltzmannMachine():
                         
             # [TODO TASK 4.1] compute probabilities and activations (samples from probabilities) of visible layer (replace the pass and zeros below)             
 
-            pass
+            prob_v_given_h = sigmoid(self.bias_v + np.dot(hidden_minibatch, self.weight_vh))
+            act_v = sample_binary(prob_v_given_h)
         
-        return np.zeros((n_samples,self.ndim_visible)), np.zeros((n_samples,self.ndim_visible))
+        return prob_v_given_h, act_v
 
 
     

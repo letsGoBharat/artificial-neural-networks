@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import struct
 
 def sigmoid(support):
     
