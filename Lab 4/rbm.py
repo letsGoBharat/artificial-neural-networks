@@ -80,16 +80,19 @@ class RestrictedBoltzmannMachine():
         n_samples = visible_trainset.shape[0]
 
         for it in range(n_iterations):
+            # [TODO TASK 4.1] run k=1 alternating Gibbs sampling : v_0 -> h_0 ->  v_1 -> h_1.
+            minibatch_idx = int(it % (n_samples / self.batch_size))
+            minibatch_endx = min([(minibatch_idx + 1) * self.batch_size, n_samples])
+            minibatch = visible_trainset[minibatch_idx * self.batch_size : minibatch_endx, :]
 
-	    # [TODO TASK 4.1] run k=1 alternating Gibbs sampling : v_0 -> h_0 ->  v_1 -> h_1.
-            # you may need to use the inference functions 'get_h_given_v' and 'get_v_given_h'.
-            # note that inference methods returns both probabilities and activations (samples from probablities) and you may have to decide when to use what.
+            #Postitve phase
+            hid_prob, h_id = self.get_h_given_v(minibatch)
 
-            # self.get_h_given_v(self.batch_size)
-            # self.get_v_given_h(self.batch_size)
-
+            #Negative phase
+            vis_prob, v_is = self.get_v_given_h(h_id)
 
             # [TODO TASK 4.1] update the parameters using function 'update_params'
+            self.update_params(minibatch, h_id, v_is, )
             
             # visualize once in a while when visible layer is input images
             
