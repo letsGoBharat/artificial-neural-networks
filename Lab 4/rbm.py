@@ -88,11 +88,11 @@ class RestrictedBoltzmannMachine():
             #Postitve phase
             hid_prob, h_id = self.get_h_given_v(minibatch)
 
-            #Negative phase
+            #Negative phase - Reconstruction
             vis_prob, v_is = self.get_v_given_h(h_id)
 
             # [TODO TASK 4.1] update the parameters using function 'update_params'
-            self.update_params(minibatch, h_id, v_is, )
+            self.update_params(minibatch, h_id, v_is, self.get_h_given_v(v_is)[0])
             
             # visualize once in a while when visible layer is input images
             
@@ -124,10 +124,10 @@ class RestrictedBoltzmannMachine():
         """
 
         # [TODO TASK 4.1] get the gradients from the arguments (replace the 0s below) and update the weight and bias parameters
-        
-        self.delta_bias_v += 0
-        self.delta_weight_vh += self.momentum * self.delta_weight_vh * ()
-        self.delta_bias_h += 0
+
+        self.delta_bias_v = self.learning_rate * (np.mean(v_0 - v_k, axis=0))
+        self.delta_weight_vh = self.learning_rate * (np.dot(v_0.T, h_0) - np.dot(v_k.T, h_k))
+        self.delta_bias_h = self.learning_rate * (np.mean(h_0 - h_k, axis=0))
         
         self.bias_v += self.delta_bias_v
         self.weight_vh += self.delta_weight_vh
@@ -195,7 +195,7 @@ class RestrictedBoltzmannMachine():
                         
             # [TODO TASK 4.1] compute probabilities and activations (samples from probabilities) of visible layer (replace the pass and zeros below)             
 
-            prob_v_given_h = sigmoid(self.bias_v + np.dot(hidden_minibatch, self.weight_vh))
+            prob_v_given_h = sigmoid(self.bias_v + np.dot(hidden_minibatch, self.weight_vh.T))
             act_v = sample_binary(prob_v_given_h)
         
         return prob_v_given_h, act_v
